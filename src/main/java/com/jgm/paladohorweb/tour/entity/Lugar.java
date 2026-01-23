@@ -17,6 +17,7 @@ public class Lugar {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String nombre;
 
     @Column(length = 1000)
@@ -30,5 +31,6 @@ public class Lugar {
     private Double latitud;
     private Double longitud;
 
+    @Builder.Default
     private Boolean activo = true;
 }

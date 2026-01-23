@@ -1,14 +1,16 @@
 package com.jgm.paladohorweb.tour.service;
 
-import com.jgm.paladohorweb.tour.entity.Lugar;
+import com.jgm.paladohorweb.tour.dto.LugarRequestDTO;
+import com.jgm.paladohorweb.tour.dto.LugarResponseDTO;
+
 
 import java.util.List;
 
 public interface LugarService {
-    List<Lugar> listar();
-    Lugar obtenerPorId(Long id);
-    Lugar crear(Lugar lugar);
 
+    List<LugarResponseDTO> listar();
 
+    LugarResponseDTO obtenerPorId(Long id);
 
+    LugarResponseDTO crear(LugarRequestDTO dto);
 }
