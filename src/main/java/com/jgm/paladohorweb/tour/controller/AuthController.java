@@ -1,4 +1,4 @@
-package com.jgm.paladohorweb.tour.security;
+package com.jgm.paladohorweb.tour.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
