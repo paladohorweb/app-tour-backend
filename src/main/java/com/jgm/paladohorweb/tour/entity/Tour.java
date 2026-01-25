@@ -3,22 +3,24 @@ package com.jgm.paladohorweb.tour.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 
 @Entity
-@Table(name = "lugares")
+@Table(name = "toures")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Lugar {
+public class Tour {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String nombre;
+    private String titulo;
 
     @Column(length = 1000)
     private String descripcion;
@@ -28,8 +30,7 @@ public class Lugar {
 
     private String imagenUrl;
 
-    private Double latitud;
-    private Double longitud;
+    private BigDecimal precio;
 
     @Builder.Default
     private Boolean activo = true;

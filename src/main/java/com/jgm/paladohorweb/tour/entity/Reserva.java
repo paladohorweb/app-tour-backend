@@ -22,7 +22,8 @@ public class Reserva {
     private String emailCliente;
     private String nombreCliente;
 
-    private String lugar;
+    @ManyToOne
+    private Tour tour;;
 
     private BigDecimal monto;
 

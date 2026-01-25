@@ -3,7 +3,7 @@ package com.jgm.paladohorweb.tour.service;
 
 import com.jgm.paladohorweb.tour.dto.LugarRequestDTO;
 import com.jgm.paladohorweb.tour.dto.LugarResponseDTO;
-import com.jgm.paladohorweb.tour.entity.Lugar;
+import com.jgm.paladohorweb.tour.entity.Tour;
 import com.jgm.paladohorweb.tour.exception.ResourceNotFoundException;
 import com.jgm.paladohorweb.tour.mapper.LugarMapper;
 import com.jgm.paladohorweb.tour.repository.LugarRepository;
@@ -28,16 +28,16 @@ public class LugarServiceImpl  implements LugarService{
 
     @Override
     public LugarResponseDTO obtenerPorId(Long id) {
-        Lugar lugar = repository.findById(id)
+        Tour tour = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Lugar no encontrado"));
 
-        return mapper.toResponseDTO(lugar);
+        return mapper.toResponseDTO(tour);
     }
 
     @Override
     public LugarResponseDTO crear(LugarRequestDTO dto) {
-        Lugar lugar = mapper.toEntity(dto);
-        Lugar guardado = repository.save(lugar);
+        Tour tour = mapper.toEntity(dto);
+        Tour guardado = repository.save(tour);
         return mapper.toResponseDTO(guardado);
     }
 }
