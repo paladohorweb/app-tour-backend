@@ -1,11 +1,6 @@
 package com.jgm.paladohorweb.tour.dto.response;
 
-import lombok.Builder;
-import lombok.Data;
-
-@Data
-@Builder
-public class PagoResponseDTO {
-    private String clientSecret;
-    private Long reservaId;
-}
+public record PagoResponseDTO(
+        String clientSecret,
+        Long reservaId
+) {}

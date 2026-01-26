@@ -22,8 +22,17 @@ public class Reserva {
     private String emailCliente;
     private String nombreCliente;
 
-    @ManyToOne
-    private String tour;
+     /* ==========================
+       RELACIONES CORRECTAS
+       ========================== */
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tour_id", nullable = false)
+    private Tour tour;   // ✅ ENTIDAD, NO STRING
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
 
     private BigDecimal monto;
 

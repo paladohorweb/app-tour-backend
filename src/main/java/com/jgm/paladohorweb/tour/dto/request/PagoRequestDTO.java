@@ -1,13 +1,14 @@
+
 package com.jgm.paladohorweb.tour.dto.request;
 
-import lombok.Data;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
-import java.math.BigDecimal;
+public record PagoRequestDTO(
 
-@Data
-public class PagoRequestDTO {
-    private String email;
-    private String nombre;
-    private String lugar;
-    private BigDecimal monto;
-}
+        @NotNull
+        Long reservaId,
+
+        @Positive
+        Double monto
+) {}
