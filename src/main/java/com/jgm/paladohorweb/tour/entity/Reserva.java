@@ -23,7 +23,7 @@ public class Reserva {
     private String nombreCliente;
 
     @ManyToOne
-    private Tour tour;;
+    private String tour;
 
     private BigDecimal monto;
 

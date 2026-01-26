@@ -28,7 +28,7 @@ public class ReservaService {
         Reserva reserva = Reserva.builder()
                 .emailCliente(dto.getEmail())
                 .nombreCliente(dto.getNombre())
-                .lugar(dto.getLugar())
+                .tour(dto.getLugar())
                 .monto(dto.getMonto())
                 .estado(EstadoReserva.PENDIENTE)
                 .stripePaymentIntentId(intent.getId())
