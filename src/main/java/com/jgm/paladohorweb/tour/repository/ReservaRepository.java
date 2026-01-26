@@ -1,7 +1,8 @@
 package com.jgm.paladohorweb.tour.repository;
 
 import com.jgm.paladohorweb.tour.entity.Reserva;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ReservaRepository {
-    void save(Reserva reserva);
-}
+public interface ReservaRepository
+        extends JpaRepository<Reserva, Long> {}
+
