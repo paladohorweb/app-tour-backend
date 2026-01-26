@@ -1,9 +1,9 @@
 package com.jgm.paladohorweb.tour.controller;
 
 
-import com.jgm.paladohorweb.tour.dto.LugarRequestDTO;
-import com.jgm.paladohorweb.tour.dto.LugarResponseDTO;
-import com.jgm.paladohorweb.tour.service.LugarService;
+import com.jgm.paladohorweb.tour.dto.TourRequestDTO;
+import com.jgm.paladohorweb.tour.dto.TourResponseDTO;
+import com.jgm.paladohorweb.tour.service.TourService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,26 +13,26 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/lugares")
+@RequestMapping("/api/tours")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
-public class LugarController {
+public class TourController {
 
-    private final LugarService service;
+    private final TourService service;
 
     @GetMapping
-    public ResponseEntity<List<LugarResponseDTO>> listar() {
+    public ResponseEntity<List<TourResponseDTO>> listar() {
         return ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LugarResponseDTO> obtener(@PathVariable Long id) {
+    public ResponseEntity<TourResponseDTO> obtener(@PathVariable Long id) {
         return ResponseEntity.ok(service.obtenerPorId(id));
     }
 
     @PostMapping
-    public ResponseEntity<LugarResponseDTO> crear(
-            @Valid @RequestBody LugarRequestDTO dto
+    public ResponseEntity<TourResponseDTO> crear(
+            @Valid @RequestBody TourRequestDTO dto
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(service.crear(dto));

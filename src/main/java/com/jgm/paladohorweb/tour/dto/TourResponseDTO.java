@@ -1,16 +1,14 @@
 package com.jgm.paladohorweb.tour.dto;
 
 
-import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class LugarRequestDTO {
-
-
-    @NotBlank
+@Builder
+public class TourResponseDTO {
+    private Long id;
     private String nombre;
-
     private String descripcion;
     private String ciudad;
     private String pais;

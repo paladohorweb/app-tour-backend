@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface LugarRepository  extends JpaRepository<Tour,Long> {
+public interface TourRepository extends JpaRepository<Tour,Long> {
 
     List<Tour> findByActivoTrue();
 
