@@ -1,14 +1,15 @@
 package com.jgm.paladohorweb.tour.service;
 
-
-import com.jgm.paladohorweb.tour.dto.response.AuthResponse;
 import com.jgm.paladohorweb.tour.dto.request.LoginRequest;
 import com.jgm.paladohorweb.tour.dto.request.RegisterRequest;
-import com.jgm.paladohorweb.tour.entity.*;
-import com.jgm.paladohorweb.tour.repository.*;
+import com.jgm.paladohorweb.tour.dto.response.AuthResponse;
+import com.jgm.paladohorweb.tour.dto.response.RegisterResponse;
+import com.jgm.paladohorweb.tour.entity.Usuario;
+import com.jgm.paladohorweb.tour.exception.BadRequestException;
+import com.jgm.paladohorweb.tour.exception.ResourceNotFoundException;
+import com.jgm.paladohorweb.tour.repository.UsuarioRepository;
 import com.jgm.paladohorweb.tour.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,33 +17,47 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UsuarioRepository usuarioRepo;
-    private final RefreshTokenRepository refreshRepo;
-    private final PasswordEncoder encoder;
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
+    private final RefreshTokenService refreshTokenService;
 
     public AuthResponse login(LoginRequest request) {
 
-        Usuario usuario = usuarioRepo.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ChangeSetPersister.NotFoundException("Usuario no existe"));
+        Usuario usuario = usuarioRepository.findByEmail(request.email())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Usuario no encontrado"));
 
-        if (!passwordEncoder.matches(request.getPassword(), usuario.getPassword())) {
-            throw new BusinessException("Credenciales inválidas");
+        if (!passwordEncoder.matches(request.password(), usuario.getPassword())) {
+            throw new BadRequestException("Credenciales inválidas");
         }
 
         String accessToken = jwtProvider.generateToken(usuario.getEmail());
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(usuario.getId());
+        String refreshToken = refreshTokenService
+                .createRefreshToken(usuario.getId())
+                .getToken();
 
-        return new AuthResponse(accessToken, refreshToken.getToken());
+        return new AuthResponse(accessToken, refreshToken);
     }
 
-    public void register(RegisterRequest req) {
-        Usuario u = new Usuario();
-        u.setEmail(req.email());
-        u.setPassword(encoder.encode(req.password()));
-        u.setNombre(req.nombre());
-        u.setRole("TURISTA");
-        usuarioRepo.save(u);
+    public RegisterResponse register(RegisterRequest request) {
+
+        if (usuarioRepository.findByEmail(request.email()).isPresent()) {
+            throw new BadRequestException("Email ya registrado");
+        }
+
+        Usuario usuario = new Usuario();
+        usuario.setEmail(request.email());
+        usuario.setPassword(passwordEncoder.encode(request.password()));
+        usuario.setNombre(request.nombre());
+        usuario.setActivo(true);
+
+        Usuario saved = usuarioRepository.save(usuario);
+
+        return new RegisterResponse(
+                saved.getId(),
+                saved.getEmail(),
+                saved.getNombre()
+        );
     }
 }
-
