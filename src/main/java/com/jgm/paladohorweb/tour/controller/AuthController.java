@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthenticationManager authManager;
-    private final JwtService jwtService;
+   // private final JwtService jwtService;
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDTO dto) {

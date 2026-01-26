@@ -1,7 +1,7 @@
 package com.jgm.paladohorweb.tour.service;
 
-import com.jgm.paladohorweb.tour.dto.TourRequestDTO;
-import com.jgm.paladohorweb.tour.dto.TourResponseDTO;
+import com.jgm.paladohorweb.tour.dto.request.TourRequestDTO;
+import com.jgm.paladohorweb.tour.dto.response.TourResponseDTO;
 
 
 import java.util.List;

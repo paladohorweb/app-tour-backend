@@ -1,8 +1,8 @@
 package com.jgm.paladohorweb.tour.mapper;
 
 
-import com.jgm.paladohorweb.tour.dto.TourRequestDTO;
-import com.jgm.paladohorweb.tour.dto.TourResponseDTO;
+import com.jgm.paladohorweb.tour.dto.request.TourRequestDTO;
+import com.jgm.paladohorweb.tour.dto.response.TourResponseDTO;
 import com.jgm.paladohorweb.tour.entity.Tour;
 import org.mapstruct.Mapper;
 

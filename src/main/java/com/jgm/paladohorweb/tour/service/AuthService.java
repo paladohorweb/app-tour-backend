@@ -1,13 +1,14 @@
 package com.jgm.paladohorweb.tour.service;
 
 
-import com.jgm.paladohorweb.tour.dto.AuthResponse;
-import com.jgm.paladohorweb.tour.dto.LoginRequest;
-import com.jgm.paladohorweb.tour.dto.RegisterRequest;
+import com.jgm.paladohorweb.tour.dto.response.AuthResponse;
+import com.jgm.paladohorweb.tour.dto.request.LoginRequest;
+import com.jgm.paladohorweb.tour.dto.request.RegisterRequest;
 import com.jgm.paladohorweb.tour.entity.*;
 import com.jgm.paladohorweb.tour.repository.*;
 import com.jgm.paladohorweb.tour.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,18 +21,19 @@ public class AuthService {
     private final PasswordEncoder encoder;
     private final JwtProvider jwtProvider;
 
-    public AuthResponse login(LoginRequest req) {
+    public AuthResponse login(LoginRequest request) {
 
-        Usuario user = usuarioRepo.findByEmail(req.email())
-                .orElseThrow();
+        Usuario usuario = usuarioRepo.findByEmail(request.getEmail())
+                .orElseThrow(() -> new ChangeSetPersister.NotFoundException("Usuario no existe"));
 
-        if (!encoder.matches(req.password(),
-                user.getPassword()))
-            throw new RuntimeException("Credenciales inválidas");
+        if (!passwordEncoder.matches(request.getPassword(), usuario.getPassword())) {
+            throw new BusinessException("Credenciales inválidas");
+        }
 
-        String token = jwtProvider.generateToken(user.getEmail());
+        String accessToken = jwtProvider.generateToken(usuario.getEmail());
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(usuario.getId());
 
-        return new AuthResponse(token);
+        return new AuthResponse(accessToken, refreshToken.getToken());
     }
 
     public void register(RegisterRequest req) {

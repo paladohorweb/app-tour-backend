@@ -1,4 +1,4 @@
-package com.jgm.paladohorweb.tour.dto;
+package com.jgm.paladohorweb.tour.dto.response;
 
 
 import lombok.Builder;

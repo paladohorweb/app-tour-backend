@@ -1,7 +1,7 @@
 package com.jgm.paladohorweb.tour.service;
 
-import com.jgm.paladohorweb.tour.dto.PagoRequestDTO;
-import com.jgm.paladohorweb.tour.dto.PagoResponseDTO;
+import com.jgm.paladohorweb.tour.dto.request.PagoRequestDTO;
+import com.jgm.paladohorweb.tour.dto.response.PagoResponseDTO;
 import com.jgm.paladohorweb.tour.entity.EstadoReserva;
 import com.jgm.paladohorweb.tour.entity.Reserva;
 import com.jgm.paladohorweb.tour.repository.ReservaRepository;
