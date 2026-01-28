@@ -11,6 +11,9 @@ import com.jgm.paladohorweb.tour.exception.ResourceNotFoundException;
 import com.jgm.paladohorweb.tour.repository.UsuarioRepository;
 import com.jgm.paladohorweb.tour.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,18 +25,27 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final RefreshTokenService refreshTokenService;
+    private final AuthenticationManager authenticationManager;
 
     public AuthResponse login(LoginRequest request) {
+
+        Authentication authentication =
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                request.email(),
+                                request.password()
+                        )
+                );
 
         Usuario usuario = usuarioRepository.findByEmail(request.email())
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Usuario no encontrado"));
 
-        if (!passwordEncoder.matches(request.password(), usuario.getPassword())) {
-            throw new BadRequestException("Credenciales inválidas");
-        }
+        String accessToken = jwtProvider.generateToken(
+                usuario.getEmail(),
+                usuario.getRol().name()
+        );
 
-        String accessToken = jwtProvider.generateToken(usuario.getEmail());
         String refreshToken = refreshTokenService
                 .createRefreshToken(usuario.getId())
                 .getToken();
