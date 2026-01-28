@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Tour {
 
     @Id
@@ -20,7 +19,7 @@ public class Tour {
     private Long id;
 
     @Column(nullable = false)
-    private String titulo;
+    private String nombre;
 
     @Column(length = 1000)
     private String descripcion;
@@ -32,6 +31,9 @@ public class Tour {
 
     private BigDecimal precio;
 
-    @Builder.Default
+    private Double latitud;
+    private Double longitud;
+
+
     private Boolean activo = true;
 }

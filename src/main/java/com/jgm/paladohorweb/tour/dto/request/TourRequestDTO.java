@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class TourRequestDTO {
@@ -16,11 +15,11 @@ public class TourRequestDTO {
 
     @NotBlank
     private String nombre;
-
     private String descripcion;
     private String ciudad;
     private String pais;
     private String imagenUrl;
     private Double latitud;
     private Double longitud;
+    private Double precio;
 }

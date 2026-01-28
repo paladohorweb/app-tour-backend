@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -36,8 +37,19 @@ public class TourServiceImpl implements TourService {
 
     @Override
     public TourResponseDTO crear(TourRequestDTO dto) {
-        Tour tour = mapper.toEntity(dto);
-        Tour guardado = repository.save(tour);
-        return mapper.toResponseDTO(guardado);
+
+        Tour tour = new Tour();
+        tour.setNombre(dto.getNombre());
+        tour.setDescripcion(dto.getDescripcion());
+        tour.setCiudad(dto.getCiudad());
+        tour.setPais(dto.getPais());
+        tour.setImagenUrl(dto.getImagenUrl());
+        tour.setLatitud(dto.getLatitud());
+        tour.setLongitud(dto.getLongitud());
+        tour.setPrecio(BigDecimal.valueOf(dto.getPrecio()));
+        tour.setActivo(true);
+
+        Tour saved = repository.save(tour);
+        return mapper.toResponseDTO(saved);
     }
 }
