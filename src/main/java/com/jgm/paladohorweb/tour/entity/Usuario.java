@@ -21,11 +21,13 @@ public class Usuario {
     @Column(unique = true)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Rol rol;
 
+    @Column(nullable = false)
   private Boolean activo;
 }

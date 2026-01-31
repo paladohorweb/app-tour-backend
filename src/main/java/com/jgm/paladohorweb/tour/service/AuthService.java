@@ -63,7 +63,7 @@ public class AuthService {
         usuario.setEmail(request.email());
         usuario.setPassword(passwordEncoder.encode(request.password()));
         usuario.setNombre(request.nombre());
-         usuario.setRol(Rol.ROLE_USER); // 🔥 AQUÍ ESTABA TU PROBLEMA
+         usuario.setRol(Rol.USER); // 🔥 AQUÍ ESTABA TU PROBLEMA
         usuario.setActivo(true);
 
         Usuario saved = usuarioRepository.save(usuario);
