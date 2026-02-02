@@ -39,6 +39,8 @@ public class Reserva {
     @Enumerated(EnumType.STRING)
     private EstadoReserva estado;
 
+
+    @Column(unique = true)
     private String stripePaymentIntentId;
 
     private LocalDateTime fechaCreacion;

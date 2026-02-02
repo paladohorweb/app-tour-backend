@@ -44,5 +44,17 @@ public class ReservaService {
                 reserva.getId()
         );
     }
-}
+
+    public void marcarReservaPagada(String paymentIntentId) {
+
+
+            Reserva reserva = (Reserva) reservaRepository
+                    .findByPaymentIntentId(paymentIntentId)
+                            .orElse(paymentIntentId);
+
+            reserva.setEstado(EstadoReserva.PAGADA);
+            reservaRepository.save(reserva);
+        }
+    }
+
 
