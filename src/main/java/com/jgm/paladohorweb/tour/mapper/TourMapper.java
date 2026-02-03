@@ -11,7 +11,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface TourMapper {
-    //Tour toEntity(TourRequestDTO dto);
+    Tour toEntity(TourRequestDTO dto);
 
     TourResponseDTO toResponseDTO(Tour entity);
 

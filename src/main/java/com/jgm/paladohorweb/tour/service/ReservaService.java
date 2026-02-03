@@ -49,7 +49,7 @@ public class ReservaService {
 
 
         Reserva reserva = reservaRepository
-                .findByPaymentIntentId(paymentIntentId)
+                .findByStripePaymentIntentId(paymentIntentId)
                 .orElseThrow(() ->
                         new RuntimeException("Reserva no encontrada para paymentIntentId: " + paymentIntentId)
                 );

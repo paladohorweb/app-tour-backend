@@ -10,7 +10,9 @@ import java.util.Optional;
 public interface ReservaRepository
         extends JpaRepository<Reserva, Long> {
 
-    Optional<Reserva> findByPaymentIntentId(String paymentIntentId);
+    Optional<Reserva> findByStripePaymentIntentId(String stripePaymentIntentId);
+
+
 }
 
 
