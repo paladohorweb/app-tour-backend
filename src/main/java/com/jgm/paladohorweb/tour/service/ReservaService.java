@@ -48,9 +48,11 @@ public class ReservaService {
     public void marcarReservaPagada(String paymentIntentId) {
 
 
-            Reserva reserva = (Reserva) reservaRepository
-                    .findByPaymentIntentId(paymentIntentId)
-                            .orElse(paymentIntentId);
+        Reserva reserva = reservaRepository
+                .findByPaymentIntentId(paymentIntentId)
+                .orElseThrow(() ->
+                        new RuntimeException("Reserva no encontrada para paymentIntentId: " + paymentIntentId)
+                );
 
             reserva.setEstado(EstadoReserva.PAGADA);
             reservaRepository.save(reserva);

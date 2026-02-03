@@ -3,10 +3,14 @@ package com.jgm.paladohorweb.tour.repository;
 import com.jgm.paladohorweb.tour.entity.Reserva;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.lang.ScopedValue;
+
+
+import java.util.Optional;
 
 public interface ReservaRepository
         extends JpaRepository<Reserva, Long> {
-    ScopedValue<Object> findByPaymentIntentId(String paymentIntentId);
+
+    Optional<Reserva> findByPaymentIntentId(String paymentIntentId);
 }
+
 
