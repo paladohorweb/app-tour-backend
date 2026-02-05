@@ -1,15 +1,18 @@
 package com.jgm.paladohorweb.tour.dto.response;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.math.BigDecimal;
 
 @Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class TourResponseDTO {
 
+    private Long id;
     private String nombre;
     private String descripcion;
     private String ciudad;
@@ -17,5 +20,5 @@ public class TourResponseDTO {
     private String imagenUrl;
     private Double latitud;
     private Double longitud;
-    private Double precio;
+    private BigDecimal precio;
 }

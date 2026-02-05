@@ -2,12 +2,20 @@ package com.jgm.paladohorweb.tour.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public record CreateReservaRequest(
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class CreateReservaRequest {
 
         @NotNull(message = "El id del tour es obligatorio")
-        Long tourId,
+        Long tourId;
 
         @Email(message = "Email inválido")
-        String emailCliente
-) {}
+        String emailClient;
+
+}

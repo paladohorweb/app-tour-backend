@@ -5,13 +5,18 @@ import com.jgm.paladohorweb.tour.dto.request.TourRequestDTO;
 import com.jgm.paladohorweb.tour.dto.response.TourResponseDTO;
 import com.jgm.paladohorweb.tour.entity.Tour;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 
 
 @Mapper(componentModel = "spring")
 public interface TourMapper {
+
+    @Mapping(target = "activo", ignore = true)
     Tour toEntity(TourRequestDTO dto);
+
+
 
     TourResponseDTO toResponseDTO(Tour entity);
 

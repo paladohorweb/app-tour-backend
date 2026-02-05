@@ -1,7 +1,15 @@
 package com.jgm.paladohorweb.tour.dto.response;
 
-public record RegisterResponse(
-        Long id,
-        String email,
-        String nombre
-) {}
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class RegisterResponse{
+        Long id;
+        String email;
+        String nombre;
+}

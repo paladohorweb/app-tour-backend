@@ -5,6 +5,7 @@ import com.jgm.paladohorweb.tour.security.jwt.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -42,12 +43,20 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/auth/**",
-                                "/api/tours/**" ,  // 👈 PERMITIR TOURS
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**"
-                        ).permitAll()
+
+                        // 🔓 AUTH
+                        .requestMatchers("/api/auth/**").permitAll()
+
+                        // 🔓 TOURS SOLO LECTURA
+                        .requestMatchers(HttpMethod.GET, "/api/tours/**").permitAll()
+
+                        // 🔐 TOURS ESCRITURA
+                        .requestMatchers(HttpMethod.POST, "/api/tours/**").hasRole("ADMIN")
+
+                        // 🔐 SWAGGER
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+
+                        // 🔐 TODO LO DEMÁS
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

@@ -39,6 +39,7 @@ public class TourServiceImpl implements TourService {
     public TourResponseDTO crear(TourRequestDTO dto) {
 
         Tour tour = new Tour();
+        tour.setId(dto.getId());
         tour.setNombre(dto.getNombre());
         tour.setDescripcion(dto.getDescripcion());
         tour.setCiudad(dto.getCiudad());
@@ -46,7 +47,7 @@ public class TourServiceImpl implements TourService {
         tour.setImagenUrl(dto.getImagenUrl());
         tour.setLatitud(dto.getLatitud());
         tour.setLongitud(dto.getLongitud());
-        tour.setPrecio(BigDecimal.valueOf(dto.getPrecio()));
+        tour.setPrecio(dto.getPrecio());
         tour.setActivo(true);
 
         Tour saved = repository.save(tour);

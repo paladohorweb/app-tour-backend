@@ -25,15 +25,15 @@ public class ReservaService {
 
     public PagoResponseDTO crearPago(PagoRequestDTO dto) throws StripeException {
 
-        Reserva reserva = reservaRepository.findById(dto.reservaId())
+        Reserva reserva = reservaRepository.findById(dto.getReservaId())
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Reserva no encontrada"));
 
         PaymentIntent intent =
-                stripeService.crearPaymentIntent(BigDecimal.valueOf(dto.monto()));
+                stripeService.crearPaymentIntent(BigDecimal.valueOf(dto.getMont()));
 
         reserva.setEstado(EstadoReserva.PENDIENTE);
-        reserva.setMonto(BigDecimal.valueOf(dto.monto()));
+        reserva.setMonto(BigDecimal.valueOf(dto.getMont()));
         reserva.setStripePaymentIntentId(intent.getId());
         reserva.setFechaCreacion(LocalDateTime.now());
 

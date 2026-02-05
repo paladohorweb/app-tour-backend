@@ -1,11 +1,11 @@
 package com.jgm.paladohorweb.tour.dto.request;
 
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
@@ -13,7 +13,8 @@ import lombok.NoArgsConstructor;
 public class TourRequestDTO {
 
 
-    @NotBlank
+
+    private Long id;
     private String nombre;
     private String descripcion;
     private String ciudad;
@@ -21,5 +22,5 @@ public class TourRequestDTO {
     private String imagenUrl;
     private Double latitud;
     private Double longitud;
-    private Double precio;
+    private BigDecimal precio;
 }

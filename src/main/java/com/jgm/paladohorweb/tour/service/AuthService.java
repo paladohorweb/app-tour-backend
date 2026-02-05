@@ -32,12 +32,12 @@ public class AuthService {
         Authentication authentication =
                 authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
-                                request.email(),
-                                request.password()
+                                request.email,
+                                request.password
                         )
                 );
 
-        Usuario usuario = usuarioRepository.findByEmail(request.email())
+        Usuario usuario = usuarioRepository.findByEmail(request.email)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Usuario no encontrado"));
 
@@ -55,14 +55,14 @@ public class AuthService {
 
     public RegisterResponse register(RegisterRequest request) {
 
-        if (usuarioRepository.findByEmail(request.email()).isPresent()) {
+        if (usuarioRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new BadRequestException("Email ya registrado");
         }
 
         Usuario usuario = new Usuario();
-        usuario.setEmail(request.email());
-        usuario.setPassword(passwordEncoder.encode(request.password()));
-        usuario.setNombre(request.nombre());
+        usuario.setEmail(request.getEmail());
+        usuario.setPassword(passwordEncoder.encode(request.getPassword()));
+        usuario.setNombre(request.getNombre());
          usuario.setRol(Rol.ROLE_USER); // 🔥 AQUÍ ESTABA TU PROBLEMA
         usuario.setActivo(true);
 
