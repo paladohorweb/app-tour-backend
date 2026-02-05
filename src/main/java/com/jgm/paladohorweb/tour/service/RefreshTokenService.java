@@ -9,6 +9,7 @@ import com.jgm.paladohorweb.tour.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -23,11 +24,20 @@ public class RefreshTokenService {
     @Value("${jwt.refresh.expiration}")
     private Long refreshExpirationMs;
 
+
+    @Transactional
     public RefreshToken createRefreshToken(Long userId) {
 
         Usuario usuario = usuarioRepository.findById(userId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Usuario no encontrado"));
+
+        // 🔥 FORZAR BORRADO REAL
+        repository.findByUsuario(usuario)
+                .ifPresent(repository::delete);
+
+        repository.flush(); // 👈 CLAVE
+
 
         RefreshToken token = new RefreshToken();
         token.setUsuario(usuario);

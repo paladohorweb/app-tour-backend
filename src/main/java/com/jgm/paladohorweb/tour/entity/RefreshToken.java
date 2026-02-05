@@ -15,6 +15,7 @@ public class RefreshToken {
     private Long id;
 
     @OneToOne
+    @JoinColumn(name = "usuario_id", nullable = false, unique = true)
     private Usuario usuario;
 
     private String token;
