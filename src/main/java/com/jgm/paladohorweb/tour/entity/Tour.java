@@ -29,7 +29,7 @@ public class Tour {
 
     private String imagenUrl;
 
-    private BigDecimal precio;
+    private Long precio;
 
     private Double latitud;
     private Double longitud;

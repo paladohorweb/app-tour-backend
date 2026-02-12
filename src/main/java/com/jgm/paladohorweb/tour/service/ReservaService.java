@@ -26,37 +26,39 @@ public class ReservaService {
     public PagoResponseDTO crearPago(PagoRequestDTO dto) throws StripeException {
 
         Reserva reserva = reservaRepository.findById(dto.getReservaId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Reserva no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada"));
 
-        PaymentIntent intent =
-                stripeService.crearPaymentIntent(BigDecimal.valueOf(dto.getMont()));
+        // ✅ Stripe amount en minor units (Long)
+        Long amount = dto.getMonto();
 
+        PaymentIntent intent = stripeService.crearPaymentIntent(amount, reserva.getId());
+
+        // Persistimos “intención” y dejamos estado pendiente
         reserva.setEstado(EstadoReserva.PENDIENTE);
-        reserva.setMonto(BigDecimal.valueOf(dto.getMont()));
+        reserva.setMonto(BigDecimal.valueOf(amount)); // si usas COP está ok, ideal: guardar moneda también
         reserva.setStripePaymentIntentId(intent.getId());
         reserva.setFechaCreacion(LocalDateTime.now());
 
         reservaRepository.save(reserva);
 
-        return new PagoResponseDTO(
-                intent.getClientSecret(),
-                reserva.getId()
-        );
+        return new PagoResponseDTO(intent.getClientSecret(), reserva.getId());
     }
 
     public void marcarReservaPagada(String paymentIntentId) {
+        Reserva reserva = reservaRepository.findByStripePaymentIntentId(paymentIntentId)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada para paymentIntentId: " + paymentIntentId));
 
-
-        Reserva reserva = reservaRepository
-                .findByStripePaymentIntentId(paymentIntentId)
-                .orElseThrow(() ->
-                        new RuntimeException("Reserva no encontrada para paymentIntentId: " + paymentIntentId)
-                );
-
-            reserva.setEstado(EstadoReserva.PAGADA);
-            reservaRepository.save(reserva);
-        }
+        reserva.setEstado(EstadoReserva.PAGADA);
+        reservaRepository.save(reserva);
     }
+
+    public void marcarReservaFallida(String paymentIntentId) {
+        Reserva reserva = reservaRepository.findByStripePaymentIntentId(paymentIntentId)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada para paymentIntentId: " + paymentIntentId));
+
+        reserva.setEstado(EstadoReserva.FALLIDA); // si no tienes FALLIDA, créala
+        reservaRepository.save(reserva);
+    }
+}
 
 

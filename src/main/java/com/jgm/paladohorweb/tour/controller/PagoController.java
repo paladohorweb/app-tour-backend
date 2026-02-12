@@ -4,6 +4,7 @@ import com.jgm.paladohorweb.tour.dto.request.PagoRequestDTO;
 import com.jgm.paladohorweb.tour.dto.response.PagoResponseDTO;
 import com.jgm.paladohorweb.tour.service.ReservaService;
 import com.stripe.exception.StripeException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +21,7 @@ public class PagoController {
 
     @PostMapping("/crear-intent")
     public ResponseEntity<PagoResponseDTO> crearPago(
-            @RequestBody PagoRequestDTO dto
+            @Valid @RequestBody PagoRequestDTO dto
     ) throws StripeException {
         return ResponseEntity.ok(reservaService.crearPago(dto));
     }
