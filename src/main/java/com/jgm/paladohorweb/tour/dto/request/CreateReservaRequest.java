@@ -13,9 +13,11 @@ import lombok.NoArgsConstructor;
 public class CreateReservaRequest {
 
         @NotNull(message = "El id del tour es obligatorio")
-        Long tourId;
+        private Long tourId;
 
         @Email(message = "Email inválido")
-        String emailClient;
+        private String emailCliente;
+
+        private String nombreCliente;
 
 }

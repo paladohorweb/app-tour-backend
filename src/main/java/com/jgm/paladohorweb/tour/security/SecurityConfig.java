@@ -47,13 +47,23 @@ public class SecurityConfig {
                         // 🔓 AUTH
                         .requestMatchers("/api/auth/**").permitAll()
 
+                        // 🔓 STRIPE WEBHOOK (Stripe NO lleva JWT)
+                        .requestMatchers(HttpMethod.POST, "/api/stripe/webhook").permitAll()
+
                         // 🔓 TOURS SOLO LECTURA
                         .requestMatchers(HttpMethod.GET, "/api/tours/**").permitAll()
 
-                        // 🔐 TOURS ESCRITURA
+                        // 🔐 TOURS ESCRITURA SOLO ADMIN
                         .requestMatchers(HttpMethod.POST, "/api/tours/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/tours/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/tours/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/tours/**").hasRole("ADMIN")
 
-                        // 🔐 SWAGGER
+                        // 🔐 RESERVAS Y PAGOS (usuario logueado)
+                        .requestMatchers("/api/reservas/**").authenticated()
+                        .requestMatchers("/api/pagos/**").authenticated()
+
+                        // 🔓 SWAGGER
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
                         // 🔐 TODO LO DEMÁS

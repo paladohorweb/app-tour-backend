@@ -13,7 +13,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface TourMapper {
 
-    @Mapping(target = "activo", ignore = true)
+
     Tour toEntity(TourRequestDTO dto);
 
 

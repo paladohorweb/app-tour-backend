@@ -1,7 +1,7 @@
 package com.jgm.paladohorweb.tour.mapper;
 
 import com.jgm.paladohorweb.tour.dto.request.CreateReservaRequest;
-import com.jgm.paladohorweb.tour.dto.response.ReservaResponse;
+import com.jgm.paladohorweb.tour.dto.response.ReservaResponseDTO;
 import com.jgm.paladohorweb.tour.entity.Reserva;
 import org.mapstruct.Mapper;
 
@@ -15,5 +15,5 @@ public interface ReservaMapper {
 //    @Mapping(target = "estado", ignore = true)
     Reserva toEntity(CreateReservaRequest dto);
 
-    ReservaResponse toResponse(Reserva reserva);
+    ReservaResponseDTO toResponse(Reserva reserva);
 }
