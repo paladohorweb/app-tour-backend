@@ -1,7 +1,8 @@
 package com.jgm.paladohorweb.tour.service;
 
 import com.jgm.paladohorweb.tour.dto.request.CreateReservaRequest;
-import com.jgm.paladohorweb.tour.dto.response.PagoRequestDTO;
+import com.jgm.paladohorweb.tour.dto.request.PagoRequestDTO;
+import com.jgm.paladohorweb.tour.dto.response.PagoResponseDTO;
 import com.jgm.paladohorweb.tour.dto.response.ReservaResponseDTO;
 import com.jgm.paladohorweb.tour.entity.EstadoReserva;
 import com.jgm.paladohorweb.tour.entity.Reserva;
@@ -45,7 +46,11 @@ public class ReservaService {
                 .orElseThrow(() -> new ResourceNotFoundException("Tour no encontrado"));
 
         // monto viene del tour (fuente de verdad)
-        BigDecimal monto = BigDecimal.valueOf(tour.getPrecio()); // BigDecimal
+        BigDecimal monto;
+        monto = BigDecimal.valueOf(tour.getPrecio());
+        if (monto == null) {
+            throw new ResourceNotFoundException("El tour no tiene precio configurado");
+        }// BigDecimal
 
         Reserva reserva = Reserva.builder()
                 .usuario(usuario)
@@ -68,23 +73,23 @@ public class ReservaService {
         return toResponse(r);
     }
 
-    public PagoRequestDTO crearPago(com.jgm.paladohorweb.tour.dto.request.PagoRequestDTO dto) throws StripeException {
+    public PagoResponseDTO crearPago(PagoRequestDTO dto) throws StripeException {
 
         Reserva reserva = reservaRepository.findById(dto.getReservaId())
                 .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada"));
 
-        // ✅ seguridad: el monto NO debe venir del frontend (evitas manipulación)
-        // Usamos el monto real guardado en DB
+        // ✅ monto real desde DB (no manipulable)
         Long amountMinorUnits = reserva.getMonto().longValue();
 
         PaymentIntent intent = stripeService.crearPaymentIntent(amountMinorUnits, reserva.getId());
 
         reserva.setEstado(EstadoReserva.PENDIENTE);
         reserva.setStripePaymentIntentId(intent.getId());
+        reserva.setFechaCreacion(LocalDateTime.now());
 
         reservaRepository.save(reserva);
 
-        return new PagoRequestDTO();
+        return new PagoResponseDTO(intent.getClientSecret(), reserva.getId());
     }
     public void marcarReservaPagada(String paymentIntentId) {
         Reserva reserva = reservaRepository.findByStripePaymentIntentId(paymentIntentId)

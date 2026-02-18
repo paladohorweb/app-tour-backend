@@ -9,7 +9,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PagoRequestDTO {
+public class PagoResponseDTO {
     @NotNull
-    private Long reservaId;
+    private String clientSecret;
+
+    public PagoResponseDTO(String clientSecret, Long id) {
+    }
 }

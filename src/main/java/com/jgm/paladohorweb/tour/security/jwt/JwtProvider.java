@@ -22,6 +22,7 @@ public class JwtProvider {
 
     @PostConstruct
     public void init() {
+        System.out.println("JWT_SECRET length = " + (jwtSecret == null ? "null" : jwtSecret.length()));
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 

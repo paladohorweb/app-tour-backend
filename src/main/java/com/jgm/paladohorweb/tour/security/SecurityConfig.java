@@ -47,6 +47,7 @@ public class SecurityConfig {
                         // 🔓 AUTH
                         .requestMatchers("/api/auth/**").permitAll()
 
+
                         // 🔓 STRIPE WEBHOOK (Stripe NO lleva JWT)
                         .requestMatchers(HttpMethod.POST, "/api/stripe/webhook").permitAll()
 

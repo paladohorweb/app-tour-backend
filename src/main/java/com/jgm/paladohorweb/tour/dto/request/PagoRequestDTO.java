@@ -16,13 +16,15 @@ public class PagoRequestDTO{
         @NotNull
         Long reservaId;
 
-
-        /**
-         * Monto en la moneda mínima:
-         * - COP: 2000 = $2.000 COP (zero-decimal)
-         * - USD: 2000 = $20.00 USD (centavos)
-         */
-        @NotNull
-        @Positive
-        private Long monto;
 }
+
+
+////        /**
+//         * Monto en la moneda mínima:
+//         * - COP: 2000 = $2.000 COP (zero-decimal)
+//         * - USD: 2000 = $20.00 USD (centavos)
+//         */
+//        @NotNull
+//        @Positive
+//        private Long monto;
+//}
