@@ -1,6 +1,8 @@
 package com.jgm.paladohorweb.tour.dto.request;
 
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +16,7 @@ public class TourRequestDTO {
 
 
 
-    private Long id;
+
     private String nombre;
     private String descripcion;
     private String ciudad;
@@ -22,5 +24,8 @@ public class TourRequestDTO {
     private String imagenUrl;
     private Double latitud;
     private Double longitud;
-    private Long precio;
+
+    @NotNull
+    @Positive
+    private BigDecimal precio;
 }

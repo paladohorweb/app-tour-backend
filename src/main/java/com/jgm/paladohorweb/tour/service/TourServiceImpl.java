@@ -23,31 +23,22 @@ public class TourServiceImpl implements TourService {
     private final TourMapper mapper;
 
     @Override
+    @Transactional(readOnly = true)
     public List<TourResponseDTO> listar() {
         return mapper.toResponseList(repository.findByActivoTrue());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TourResponseDTO obtenerPorId(Long id) {
         Tour tour = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Lugar no encontrado"));
-
+                .orElseThrow(() -> new ResourceNotFoundException("Tour no encontrado"));
         return mapper.toResponseDTO(tour);
     }
 
     @Override
     public TourResponseDTO crear(TourRequestDTO dto) {
-
-        Tour tour = new Tour();
-        tour.setId(dto.getId());
-        tour.setNombre(dto.getNombre());
-        tour.setDescripcion(dto.getDescripcion());
-        tour.setCiudad(dto.getCiudad());
-        tour.setPais(dto.getPais());
-        tour.setImagenUrl(dto.getImagenUrl());
-        tour.setLatitud(dto.getLatitud());
-        tour.setLongitud(dto.getLongitud());
-        tour.setPrecio(dto.getPrecio());
+        Tour tour = mapper.toEntity(dto);
         tour.setActivo(true);
 
         Tour saved = repository.save(tour);

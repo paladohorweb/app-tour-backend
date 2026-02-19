@@ -20,5 +20,6 @@ public class TourResponseDTO {
     private String imagenUrl;
     private Double latitud;
     private Double longitud;
-    private Long precio;
+    private BigDecimal precio;
+    private Boolean activo;
 }

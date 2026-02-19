@@ -4,11 +4,9 @@ import com.jgm.paladohorweb.tour.dto.request.CreateReservaRequest;
 import com.jgm.paladohorweb.tour.dto.request.PagoRequestDTO;
 import com.jgm.paladohorweb.tour.dto.response.PagoResponseDTO;
 import com.jgm.paladohorweb.tour.dto.response.ReservaResponseDTO;
-import com.jgm.paladohorweb.tour.entity.EstadoReserva;
-import com.jgm.paladohorweb.tour.entity.Reserva;
-import com.jgm.paladohorweb.tour.entity.Tour;
-import com.jgm.paladohorweb.tour.entity.Usuario;
+import com.jgm.paladohorweb.tour.entity.*;
 import com.jgm.paladohorweb.tour.exception.ResourceNotFoundException;
+import com.jgm.paladohorweb.tour.mapper.ReservaMapper;
 import com.jgm.paladohorweb.tour.repository.ReservaRepository;
 import com.jgm.paladohorweb.tour.repository.TourRepository;
 import com.jgm.paladohorweb.tour.repository.UsuarioRepository;
@@ -30,47 +28,49 @@ public class ReservaService {
     private final ReservaRepository reservaRepository;
     private final StripeService stripeService;
 
-    // ✅ nuevos
     private final TourRepository tourRepository;
     private final UsuarioRepository usuarioRepository;
 
+    private final ReservaMapper reservaMapper; // ✅ INYECTA EL MAPPER
+
     public ReservaResponseDTO crearReserva(CreateReservaRequest req) {
 
-        // Usuario autenticado (email viene en el JWT subject)
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        String emailJwt = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        Usuario usuario = usuarioRepository.findByEmail(email)
+        Usuario usuario = usuarioRepository.findByEmail(emailJwt)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
         Tour tour = tourRepository.findById(req.getTourId())
                 .orElseThrow(() -> new ResourceNotFoundException("Tour no encontrado"));
 
-        // monto viene del tour (fuente de verdad)
-        BigDecimal monto;
-        monto = BigDecimal.valueOf(tour.getPrecio());
-        if (monto == null) {
+        if (tour.getPrecio() == null) {
             throw new ResourceNotFoundException("El tour no tiene precio configurado");
-        }// BigDecimal
+        }
 
-        Reserva reserva = Reserva.builder()
-                .usuario(usuario)
-                .tour(tour)
-                .estado(EstadoReserva.PENDIENTE)
-                .monto(monto)
-                .emailCliente(req.getEmailCliente() != null ? req.getEmailCliente() : usuario.getEmail())
-                .nombreCliente(req.getNombreCliente() != null ? req.getNombreCliente() : usuario.getNombre())
-                .fechaCreacion(LocalDateTime.now())
-                .build();
+        // ✅ Usa MapStruct para mapear email/nombre (lo demás lo setea el service)
+        Reserva reserva = reservaMapper.toEntity(req);
+
+        reserva.setUsuario(usuario);
+        reserva.setTour(tour);
+        reserva.setEstado(EstadoReserva.PENDIENTE);
+        reserva.setMonto(BigDecimal.valueOf(tour.getPrecio())); // BigDecimal
+        reserva.setFechaCreacion(LocalDateTime.now());
+
+        // Defaults si no vienen en el request
+        if (reserva.getEmailCliente() == null) reserva.setEmailCliente(usuario.getEmail());
+        if (reserva.getNombreCliente() == null) reserva.setNombreCliente(usuario.getNombre());
 
         Reserva saved = reservaRepository.save(reserva);
 
-        return toResponse(saved);
+        // ✅ DEVUELVE DTO con mapper (sin builder manual)
+        return reservaMapper.toResponse(saved);
     }
 
     public ReservaResponseDTO obtenerReserva(Long id) {
         Reserva r = reservaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada"));
-        return toResponse(r);
+
+        return reservaMapper.toResponse(r);
     }
 
     public PagoResponseDTO crearPago(PagoRequestDTO dto) throws StripeException {
@@ -78,7 +78,7 @@ public class ReservaService {
         Reserva reserva = reservaRepository.findById(dto.getReservaId())
                 .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada"));
 
-        // ✅ monto real desde DB (no manipulable)
+        // ✅ monto real desde DB
         Long amountMinorUnits = reserva.getMonto().longValue();
 
         PaymentIntent intent = stripeService.crearPaymentIntent(amountMinorUnits, reserva.getId());
@@ -91,6 +91,7 @@ public class ReservaService {
 
         return new PagoResponseDTO(intent.getClientSecret(), reserva.getId());
     }
+
     public void marcarReservaPagada(String paymentIntentId) {
         Reserva reserva = reservaRepository.findByStripePaymentIntentId(paymentIntentId)
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada para paymentIntentId: " + paymentIntentId));
@@ -103,30 +104,7 @@ public class ReservaService {
         Reserva reserva = reservaRepository.findByStripePaymentIntentId(paymentIntentId)
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada para paymentIntentId: " + paymentIntentId));
 
-        reserva.setEstado(EstadoReserva.FALLIDA); // si no tienes FALLIDA, créala
+        reserva.setEstado(EstadoReserva.FALLIDA);
         reservaRepository.save(reserva);
     }
-
-    private ReservaResponseDTO toResponse(Reserva r) {
-        return ReservaResponseDTO.builder()
-                .id(r.getId())
-                .tourId(r.getTour().getId())
-                .tourNombre(r.getTour().getNombre())
-                .usuarioId(r.getUsuario().getId())
-                .emailCliente(r.getEmailCliente())
-                .nombreCliente(r.getNombreCliente())
-                .monto(r.getMonto())
-                .estado(r.getEstado())
-                .stripePaymentIntentId(r.getStripePaymentIntentId())
-                .fechaCreacion(r.getFechaCreacion())
-                .build();
-    }
-
-
-
-
-
-
 }
-
-

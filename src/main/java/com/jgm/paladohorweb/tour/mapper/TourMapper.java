@@ -14,9 +14,9 @@ import java.util.List;
 public interface TourMapper {
 
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "activo", ignore = true)
     Tour toEntity(TourRequestDTO dto);
-
-
 
     TourResponseDTO toResponseDTO(Tour entity);
 

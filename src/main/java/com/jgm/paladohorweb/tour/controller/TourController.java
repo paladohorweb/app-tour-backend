@@ -32,12 +32,8 @@ public class TourController {
     }
 
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<TourResponseDTO> crear(
-            @Valid @RequestBody TourRequestDTO dto
-    ) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.crear(dto));
+    public ResponseEntity<TourResponseDTO> crear(@Valid @RequestBody TourRequestDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(dto));
     }
 }
