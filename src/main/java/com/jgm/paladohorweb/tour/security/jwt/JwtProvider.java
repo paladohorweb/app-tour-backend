@@ -1,6 +1,7 @@
 package com.jgm.paladohorweb.tour.security.jwt;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +24,9 @@ public class JwtProvider {
     @PostConstruct
     public void init() {
         System.out.println("JWT_SECRET length = " + (jwtSecret == null ? "null" : jwtSecret.length()));
-        this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        System.out.println("JWT_SECRET preview=" + jwtSecret.substring(0, 5) + "..." + jwtSecret.substring(jwtSecret.length()-5));
+        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret); // ✅ correcto si JWT_SECRET es base64
+        this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String generateToken(String email, String rol) {
@@ -50,13 +53,20 @@ public class JwtProvider {
 
     public boolean validateToken(String token) {
         try {
-            getClaims(token);
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException e) {
-            throw new RuntimeException("Token expirado");
-        } catch (JwtException | IllegalArgumentException e) {
-            throw new RuntimeException("Token inválido");
+            System.out.println("JWT expirado: " + e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            System.out.println("JWT no soportado: " + e.getMessage());
+        } catch (MalformedJwtException e) {
+            System.out.println("JWT malformado: " + e.getMessage());
+        } catch (io.jsonwebtoken.security.SignatureException e) {
+            System.out.println("Firma JWT inválida: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.out.println("JWT vacío/ilegal: " + e.getMessage());
         }
+        return false;
     }
 
     private Claims getClaims(String token) {

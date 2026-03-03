@@ -56,7 +56,8 @@ public class JwtFilter extends OncePerRequestFilter {
                             userDetailsService
                                     .loadUserByUsername(email);
 
-
+                    System.out.println("REQ " + request.getMethod() + " " + request.getRequestURI());
+                    System.out.println("AUTH HEADER >>> " + request.getHeader("Authorization"));
 
                     String rol = jwtProvider.getRolFromToken(token);
 

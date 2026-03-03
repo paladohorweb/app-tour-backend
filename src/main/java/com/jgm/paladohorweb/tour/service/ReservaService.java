@@ -78,18 +78,28 @@ public class ReservaService {
         Reserva reserva = reservaRepository.findById(dto.getReservaId())
                 .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada"));
 
-        // ✅ monto real desde DB
         Long amountMinorUnits = reserva.getMonto().longValue();
 
-        PaymentIntent intent = stripeService.crearPaymentIntent(amountMinorUnits, reserva.getId());
+        try {
+            PaymentIntent intent = stripeService.crearPaymentIntent(amountMinorUnits, reserva.getId());
 
-        reserva.setEstado(EstadoReserva.PENDIENTE);
-        reserva.setStripePaymentIntentId(intent.getId());
-        reserva.setFechaCreacion(LocalDateTime.now());
+            reserva.setEstado(EstadoReserva.PENDIENTE);
+            reserva.setStripePaymentIntentId(intent.getId());
+            reserva.setFechaCreacion(LocalDateTime.now());
 
-        reservaRepository.save(reserva);
+            reservaRepository.save(reserva);
 
-        return new PagoResponseDTO(intent.getClientSecret(), reserva.getId());
+            return new PagoResponseDTO(intent.getClientSecret(), reserva.getId());
+
+        } catch (StripeException e) {
+            System.out.println("❌ STRIPE ERROR: " + e.getMessage());
+            if (e.getStripeError() != null) {
+                System.out.println("❌ STRIPE CODE: " + e.getStripeError().getCode());
+                System.out.println("❌ STRIPE TYPE: " + e.getStripeError().getType());
+                System.out.println("❌ STRIPE PARAM: " + e.getStripeError().getParam());
+            }
+            throw e;
+        }
     }
 
     public void marcarReservaPagada(String paymentIntentId) {
