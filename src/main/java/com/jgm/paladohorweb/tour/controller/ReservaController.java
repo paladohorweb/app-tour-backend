@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/reservas")
 @RequiredArgsConstructor
@@ -23,6 +25,11 @@ public class ReservaController {
     @GetMapping("/{id}")
     public ResponseEntity<ReservaResponseDTO> obtener(@PathVariable Long id) {
         return ResponseEntity.ok(reservaService.obtenerReserva(id));
+    }
+
+    @GetMapping("/mias")
+    public ResponseEntity<List<ReservaResponseDTO>> mias() {
+        return ResponseEntity.ok(reservaService.listarMisReservas());
     }
 }
 

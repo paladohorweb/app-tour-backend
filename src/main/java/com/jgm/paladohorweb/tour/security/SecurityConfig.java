@@ -46,6 +46,7 @@ public class SecurityConfig {
                         // 🔓 STRIPE WEBHOOK (Stripe NO lleva JWT)
                         .requestMatchers(HttpMethod.POST, "/api/stripe/webhook").permitAll()
 
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // 🔓 TOURS SOLO LECTURA
                         .requestMatchers(HttpMethod.GET, "/api/tours/**").permitAll()
 

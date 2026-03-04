@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -117,4 +118,33 @@ public class ReservaService {
         reserva.setEstado(EstadoReserva.FALLIDA);
         reservaRepository.save(reserva);
     }
+
+    @Transactional(readOnly = true)
+    public List<ReservaResponseDTO> listarMisReservas() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+
+        return reservaRepository.findByUsuarioIdOrderByFechaCreacionDesc(usuario.getId())
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    private ReservaResponseDTO toResponse(Reserva r) {
+        return ReservaResponseDTO.builder()
+                .id(r.getId())
+                .tourId(r.getTour().getId())
+                .tourNombre(r.getTour().getNombre())
+                .usuarioId(r.getUsuario().getId())
+                .emailCliente(r.getEmailCliente())
+                .nombreCliente(r.getNombreCliente())
+                .monto(r.getMonto())
+                .estado(r.getEstado())
+                .stripePaymentIntentId(r.getStripePaymentIntentId())
+                .fechaCreacion(r.getFechaCreacion())
+                .build();
+    }
+
 }

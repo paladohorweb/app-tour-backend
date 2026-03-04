@@ -9,7 +9,8 @@ public interface TourRepository extends JpaRepository<Tour,Long> {
 
     List<Tour> findByActivoTrue();
 
-
+    // ✅ para admin
+    List<Tour> findAllByOrderByIdDesc();
 
 
 

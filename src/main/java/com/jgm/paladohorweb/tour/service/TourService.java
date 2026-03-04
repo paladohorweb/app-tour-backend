@@ -13,4 +13,12 @@ public interface TourService {
     TourResponseDTO obtenerPorId(Long id);
 
     TourResponseDTO crear(TourRequestDTO dto);
+
+    TourResponseDTO actualizar(Long id, TourRequestDTO dto);
+
+    void cambiarActivo(Long id, boolean activo);
+
+    void eliminar(Long id);
+
+    List<TourResponseDTO> listarAdmin();
 }

@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -44,4 +43,33 @@ public class TourServiceImpl implements TourService {
         Tour saved = repository.save(tour);
         return mapper.toResponseDTO(saved);
     }
+
+    public TourResponseDTO actualizar(Long id, TourRequestDTO dto) {
+        Tour tour = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Tour no encontrado"));
+
+        mapper.updateEntityFromDto(dto, tour);
+        return mapper.toResponseDTO(repository.save(tour));
+    }
+
+    public void cambiarActivo(Long id, boolean activo) {
+        Tour tour = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Tour no encontrado"));
+        tour.setActivo(activo);
+        repository.save(tour);
+    }
+
+    public void eliminar(Long id) {
+        Tour tour = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Tour no encontrado"));
+        repository.delete(tour);
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TourResponseDTO> listarAdmin() {
+        return mapper.toResponseList(repository.findAllByOrderByIdDesc());
+    }
+
 }
