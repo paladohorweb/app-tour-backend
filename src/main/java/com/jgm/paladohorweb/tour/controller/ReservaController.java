@@ -31,5 +31,11 @@ public class ReservaController {
     public ResponseEntity<List<ReservaResponseDTO>> mias() {
         return ResponseEntity.ok(reservaService.listarMisReservas());
     }
+
+    @PatchMapping("/{id}/cancelar")
+    public ResponseEntity<Void> cancelar(@PathVariable Long id){
+        reservaService.cancelarMiReserva(id);
+        return ResponseEntity.noContent().build();
+    }
 }
 

@@ -13,6 +13,10 @@ public interface ReservaRepository
     Optional<Reserva> findByStripePaymentIntentId(String stripePaymentIntentId);
 
     List<Reserva> findByUsuarioIdOrderByFechaCreacionDesc(Long usuarioId);
+
+    boolean existsByTourId(Long tourId);
 }
+
+
 
 

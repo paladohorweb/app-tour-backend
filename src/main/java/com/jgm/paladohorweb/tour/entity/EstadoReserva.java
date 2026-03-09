@@ -4,5 +4,5 @@ public enum EstadoReserva {
     PENDIENTE,
     PAGADA,
     CANCELADA,
-    FALLIDA
+    FINALIZADA, FALLIDA
 }

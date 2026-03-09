@@ -40,24 +40,23 @@ public class SecurityConfig {
                         // ✅ CORS PREFLIGHT SIEMPRE PERMITIDO (CLAVE)
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // 🔓 AUTH
                         .requestMatchers("/api/auth/**").permitAll()
-
-                        // 🔓 STRIPE WEBHOOK (Stripe NO lleva JWT)
                         .requestMatchers(HttpMethod.POST, "/api/stripe/webhook").permitAll()
 
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        // 🔓 TOURS SOLO LECTURA
-                        .requestMatchers(HttpMethod.GET, "/api/tours/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/tours").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/tours/{id}").permitAll()
 
-                        // 🔐 TOURS ESCRITURA SOLO ADMIN
+                        .requestMatchers(HttpMethod.GET, "/api/tours/admin").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/tours/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/tours/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/tours/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/tours/**").hasRole("ADMIN")
 
-                        // 🔐 RESERVAS Y PAGOS (usuario logueado)
-                        .requestMatchers("/api/reservas/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/reservas").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/reservas/mias").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/reservas/{id}").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/api/reservas/{id}/cancelar").authenticated()
+
                         .requestMatchers("/api/pagos/**").authenticated()
 
                         // 🔓 SWAGGER

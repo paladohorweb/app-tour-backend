@@ -5,6 +5,7 @@ import com.jgm.paladohorweb.tour.dto.request.PagoRequestDTO;
 import com.jgm.paladohorweb.tour.dto.response.PagoResponseDTO;
 import com.jgm.paladohorweb.tour.dto.response.ReservaResponseDTO;
 import com.jgm.paladohorweb.tour.entity.*;
+import com.jgm.paladohorweb.tour.exception.BadRequestException;
 import com.jgm.paladohorweb.tour.exception.ResourceNotFoundException;
 import com.jgm.paladohorweb.tour.mapper.ReservaMapper;
 import com.jgm.paladohorweb.tour.repository.ReservaRepository;
@@ -145,6 +146,25 @@ public class ReservaService {
                 .stripePaymentIntentId(r.getStripePaymentIntentId())
                 .fechaCreacion(r.getFechaCreacion())
                 .build();
+    }
+
+
+    public void cancelarMiReserva(Long reservaId) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Reserva reserva = reservaRepository.findById(reservaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada"));
+
+        if (!reserva.getUsuario().getEmail().equals(email)) {
+            throw new ResourceNotFoundException("Reserva no encontrada");
+        }
+
+        if (reserva.getEstado() == EstadoReserva.PAGADA || reserva.getEstado() == EstadoReserva.FINALIZADA) {
+            throw new BadRequestException("No puedes cancelar una reserva pagada/finalizada");
+        }
+
+        reserva.setEstado(EstadoReserva.CANCELADA);
+        reservaRepository.save(reserva);
     }
 
 }
