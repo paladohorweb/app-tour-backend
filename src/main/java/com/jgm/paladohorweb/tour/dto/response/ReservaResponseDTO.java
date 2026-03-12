@@ -30,4 +30,8 @@ public class ReservaResponseDTO {
 
     private String stripePaymentIntentId;
     private LocalDateTime fechaCreacion;
+
+    private Long guiaId;
+    private String guiaNombre;
+    private String guiaEmail;
 }

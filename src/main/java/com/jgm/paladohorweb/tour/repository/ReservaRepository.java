@@ -1,5 +1,6 @@
 package com.jgm.paladohorweb.tour.repository;
 
+import com.jgm.paladohorweb.tour.entity.EstadoReserva;
 import com.jgm.paladohorweb.tour.entity.Reserva;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -15,6 +16,12 @@ public interface ReservaRepository
     List<Reserva> findByUsuarioIdOrderByFechaCreacionDesc(Long usuarioId);
 
     boolean existsByTourId(Long tourId);
+
+    List<Reserva> findAllByOrderByFechaCreacionDesc();
+
+    List<Reserva> findByEstadoOrderByFechaCreacionDesc(EstadoReserva estado);
+
+    List<Reserva> findByGuiaIdOrderByFechaCreacionDesc(Long guiaId);
 }
 
 

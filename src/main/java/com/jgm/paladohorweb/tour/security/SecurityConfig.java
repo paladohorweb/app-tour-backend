@@ -37,16 +37,15 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
 
-                        // ✅ CORS PREFLIGHT SIEMPRE PERMITIDO (CLAVE)
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/stripe/webhook").permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/api/tours").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/tours/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/tours/*").permitAll()
 
-                        .requestMatchers(HttpMethod.GET, "/api/tours/admin").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
                         .requestMatchers(HttpMethod.POST, "/api/tours/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/tours/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/tours/**").hasRole("ADMIN")
@@ -54,15 +53,17 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.POST, "/api/reservas").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/reservas/mias").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/reservas/{id}").authenticated()
-                        .requestMatchers(HttpMethod.PATCH, "/api/reservas/{id}/cancelar").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/reservas/*").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/api/reservas/*/cancelar").authenticated()
 
                         .requestMatchers("/api/pagos/**").authenticated()
 
-                        // 🔓 SWAGGER
+                        .requestMatchers("/api/guia/**").hasRole("GUIA")
+
+                        .requestMatchers(HttpMethod.POST, "/api/stripe/webhook").permitAll()
+
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
-                        // 🔐 TODO LO DEMÁS
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

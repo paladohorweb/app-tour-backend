@@ -44,4 +44,8 @@ public class Reserva {
     private String stripePaymentIntentId;
 
     private LocalDateTime fechaCreacion;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "guia_id")
+    private Usuario guia;
 }

@@ -3,57 +3,41 @@ package com.jgm.paladohorweb.tour.mapper;
 import com.jgm.paladohorweb.tour.dto.request.CreateReservaRequest;
 import com.jgm.paladohorweb.tour.dto.response.ReservaResponseDTO;
 import com.jgm.paladohorweb.tour.entity.Reserva;
-import com.jgm.paladohorweb.tour.entity.Tour;
-import com.jgm.paladohorweb.tour.entity.Usuario;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
-import org.mapstruct.Named;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(
+        componentModel = "spring",
+        unmappedTargetPolicy = ReportingPolicy.IGNORE
+)
 public interface ReservaMapper {
 
-    /**
-     * CreateReservaRequest solo trae tourId/email/nombre.
-     * Las relaciones (tour, usuario) se setean en el Service.
-     */
-    @Mappings({
-            @Mapping(target = "id", ignore = true),
-            @Mapping(target = "tour", ignore = true),
-            @Mapping(target = "usuario", ignore = true),
-            @Mapping(target = "monto", ignore = true),
-            @Mapping(target = "estado", ignore = true),
-            @Mapping(target = "stripePaymentIntentId", ignore = true),
-            @Mapping(target = "fechaCreacion", ignore = true),
-
-            // Estos sí pueden mapearse directo por nombre
-            @Mapping(target = "emailCliente", source = "emailCliente"),
-            @Mapping(target = "nombreCliente", source = "nombreCliente")
-    })
+    // ============================
+    // REQUEST -> ENTITY
+    // ============================
+    // Solo mapeamos lo que realmente viene del request.
+    // Lo demás se completa en ReservaService.
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "tour", ignore = true)
+    @Mapping(target = "usuario", ignore = true)
+    @Mapping(target = "guia", ignore = true)
+    @Mapping(target = "monto", ignore = true)
+    @Mapping(target = "estado", ignore = true)
+    @Mapping(target = "stripePaymentIntentId", ignore = true)
+    @Mapping(target = "fechaCreacion", ignore = true)
     Reserva toEntity(CreateReservaRequest dto);
 
-    @Mappings({
-            @Mapping(target = "tourId", source = "tour", qualifiedByName = "tourToId"),
-            @Mapping(target = "tourNombre", source = "tour", qualifiedByName = "tourToNombre"),
-            @Mapping(target = "usuarioId", source = "usuario", qualifiedByName = "usuarioToId")
-    })
+    // ============================
+    // ENTITY -> RESPONSE DTO
+    // ============================
+    @Mapping(target = "tourId", source = "tour.id")
+    @Mapping(target = "tourNombre", source = "tour.nombre")
+    @Mapping(target = "usuarioId", source = "usuario.id")
+
+    @Mapping(target = "guiaId", source = "guia.id")
+    @Mapping(target = "guiaNombre", source = "guia.nombre")
+    @Mapping(target = "guiaEmail", source = "guia.email")
+
     ReservaResponseDTO toResponse(Reserva reserva);
-
-    // ===== Helpers para mapear relaciones =====
-
-    @Named("tourToId")
-    default Long tourToId(Tour tour) {
-        return tour != null ? tour.getId() : null;
-    }
-
-    @Named("tourToNombre")
-    default String tourToNombre(Tour tour) {
-        return tour != null ? tour.getNombre() : null;
-    }
-
-    @Named("usuarioToId")
-    default Long usuarioToId(Usuario usuario) {
-        return usuario != null ? usuario.getId() : null;
-    }
 }
-

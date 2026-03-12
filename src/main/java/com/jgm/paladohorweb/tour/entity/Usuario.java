@@ -29,5 +29,8 @@ public class Usuario {
     private Rol rol;
 
     @Column(nullable = false)
-  private Boolean activo;
+    private Boolean activo;
+
+//    private Usuario guia;
+
 }
