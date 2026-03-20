@@ -1,6 +1,7 @@
 package com.jgm.paladohorweb.tour.dto.response;
 
 import com.jgm.paladohorweb.tour.entity.EstadoReserva;
+import com.jgm.paladohorweb.tour.entity.MetodoPago;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +28,8 @@ public class ReservaResponseDTO {
 
     private BigDecimal monto;
     private EstadoReserva estado;
+
+    private MetodoPago metodoPago;
 
     private String stripePaymentIntentId;
     private LocalDateTime fechaCreacion;

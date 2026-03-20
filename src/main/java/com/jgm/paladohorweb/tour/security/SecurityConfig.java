@@ -55,6 +55,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/reservas/mias").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/reservas/*").authenticated()
                         .requestMatchers(HttpMethod.PATCH, "/api/reservas/*/cancelar").authenticated()
+                        .requestMatchers(HttpMethod.DELETE,"/api/reservas/*").authenticated()
 
                         .requestMatchers("/api/pagos/**").authenticated()
 

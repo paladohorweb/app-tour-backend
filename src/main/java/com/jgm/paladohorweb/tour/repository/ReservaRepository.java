@@ -22,6 +22,8 @@ public interface ReservaRepository
     List<Reserva> findByEstadoOrderByFechaCreacionDesc(EstadoReserva estado);
 
     List<Reserva> findByGuiaIdOrderByFechaCreacionDesc(Long guiaId);
+
+//    void eliminarMiReservaSiNoFuePagada(Long reservaId);
 }
 
 

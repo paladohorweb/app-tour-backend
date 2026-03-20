@@ -1,8 +1,8 @@
 
 package com.jgm.paladohorweb.tour.dto.request;
 
+import com.jgm.paladohorweb.tour.entity.MetodoPago;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,12 @@ import lombok.NoArgsConstructor;
 public class PagoRequestDTO{
 
         @NotNull
-        Long reservaId;
+         private Long reservaId;
+
+        @NotNull
+        private MetodoPago metodoPago;
+
+
 
 }
 

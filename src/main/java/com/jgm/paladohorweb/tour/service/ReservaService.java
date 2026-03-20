@@ -4,11 +4,7 @@ import com.jgm.paladohorweb.tour.dto.request.CreateReservaRequest;
 import com.jgm.paladohorweb.tour.dto.request.PagoRequestDTO;
 import com.jgm.paladohorweb.tour.dto.response.PagoResponseDTO;
 import com.jgm.paladohorweb.tour.dto.response.ReservaResponseDTO;
-import com.jgm.paladohorweb.tour.entity.EstadoReserva;
-import com.jgm.paladohorweb.tour.entity.Reserva;
-import com.jgm.paladohorweb.tour.entity.Rol;
-import com.jgm.paladohorweb.tour.entity.Tour;
-import com.jgm.paladohorweb.tour.entity.Usuario;
+import com.jgm.paladohorweb.tour.entity.*;
 import com.jgm.paladohorweb.tour.exception.BadRequestException;
 import com.jgm.paladohorweb.tour.exception.ResourceNotFoundException;
 import com.jgm.paladohorweb.tour.mapper.ReservaMapper;
@@ -123,28 +119,26 @@ public class ReservaService {
             throw new BadRequestException("La reserva no tiene monto configurado");
         }
 
-        Long amountMinorUnits = reserva.getMonto().longValue();
+        reserva.setMetodoPago(dto.getMetodoPago());
 
-        try {
+        // Si el método es tarjeta, usa Stripe
+        if (dto.getMetodoPago() == MetodoPago.TARJETA) {
+            Long amountMinorUnits = reserva.getMonto().longValue();
+
             PaymentIntent intent = stripeService.crearPaymentIntent(amountMinorUnits, reserva.getId());
 
-            // la reserva sigue pendiente hasta que webhook confirme
-            reserva.setEstado(EstadoReserva.PENDIENTE);
             reserva.setStripePaymentIntentId(intent.getId());
-
             reservaRepository.save(reserva);
 
             return new PagoResponseDTO(intent.getClientSecret(), reserva.getId());
-
-        } catch (StripeException e) {
-            System.out.println("❌ STRIPE ERROR: " + e.getMessage());
-            if (e.getStripeError() != null) {
-                System.out.println("❌ STRIPE CODE: " + e.getStripeError().getCode());
-                System.out.println("❌ STRIPE TYPE: " + e.getStripeError().getType());
-                System.out.println("❌ STRIPE PARAM: " + e.getStripeError().getParam());
-            }
-            throw e;
         }
+
+        // Para métodos de prueba/manuales, marcamos como pagada directamente
+        // Esto te sirve mientras montas otras pasarelas
+        reserva.setEstado(EstadoReserva.PAGADA);
+        reservaRepository.save(reserva);
+
+        return new PagoResponseDTO("MANUAL_OK", reserva.getId());
     }
 
     public void marcarReservaPagada(String paymentIntentId) {
@@ -281,6 +275,7 @@ public class ReservaService {
                 .nombreCliente(r.getNombreCliente())
                 .monto(r.getMonto())
                 .estado(r.getEstado())
+                .metodoPago(r.getMetodoPago())
                 .stripePaymentIntentId(r.getStripePaymentIntentId())
                 .fechaCreacion(r.getFechaCreacion())
                 .guiaId(r.getGuia() != null ? r.getGuia().getId() : null)
@@ -288,4 +283,33 @@ public class ReservaService {
                 .guiaEmail(r.getGuia() != null ? r.getGuia().getEmail() : null)
                 .build();
     }
+
+    public void eliminarMiReservaSiNoFuePagada(Long reservaId) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        Reserva reserva = reservaRepository.findById(reservaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada"));
+
+        boolean esDueno = reserva.getUsuario() != null
+                && reserva.getUsuario().getEmail().equals(email);
+
+        boolean esAdmin = auth.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!esDueno && !esAdmin) {
+            throw new ResourceNotFoundException("Reserva no encontrada");
+        }
+
+        if (reserva.getEstado() == EstadoReserva.PAGADA
+                || reserva.getEstado() == EstadoReserva.EN_CURSO
+                || reserva.getEstado() == EstadoReserva.FINALIZADA) {
+            throw new BadRequestException("No se puede eliminar una reserva pagada, en curso o finalizada");
+        }
+
+        reservaRepository.delete(reserva);
+    }
+
+
 }

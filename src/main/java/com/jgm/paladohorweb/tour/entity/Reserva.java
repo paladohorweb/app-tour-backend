@@ -40,6 +40,10 @@ public class Reserva {
     private EstadoReserva estado;
 
 
+    @Enumerated(EnumType.STRING)
+    private MetodoPago metodoPago;
+
+
     @Column(unique = true)
     private String stripePaymentIntentId;
 

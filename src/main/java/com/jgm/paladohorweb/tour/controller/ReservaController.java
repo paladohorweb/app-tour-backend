@@ -37,5 +37,11 @@ public class ReservaController {
         reservaService.cancelarMiReserva(id);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        reservaService.eliminarMiReservaSiNoFuePagada(id);
+        return ResponseEntity.noContent().build();
+    }
 }
 
