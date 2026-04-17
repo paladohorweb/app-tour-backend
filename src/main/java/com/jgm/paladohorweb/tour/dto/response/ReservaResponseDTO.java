@@ -37,4 +37,11 @@ public class ReservaResponseDTO {
     private Long guiaId;
     private String guiaNombre;
     private String guiaEmail;
+
+
+
+    private String paymentProvider;
+    private String externalPaymentId;
+    private String paymentRedirectUrl;
+    private String paymentReference;
 }

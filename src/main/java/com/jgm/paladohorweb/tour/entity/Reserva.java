@@ -52,4 +52,9 @@ public class Reserva {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "guia_id")
     private Usuario guia;
+
+    private String paymentProvider;      // WOMPI | MANUAL
+    private String externalPaymentId;    // id de transacción externa
+    private String paymentRedirectUrl;   // URL de checkout si aplica
+    private String paymentReference;     // referencia única
 }

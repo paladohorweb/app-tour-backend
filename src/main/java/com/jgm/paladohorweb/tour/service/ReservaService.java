@@ -33,6 +33,7 @@ public class ReservaService {
     private final TourRepository tourRepository;
     private final UsuarioRepository usuarioRepository;
     private final ReservaMapper reservaMapper;
+    private final WompiService wompiService;
 
     public ReservaResponseDTO crearReserva(CreateReservaRequest req) {
 
@@ -107,12 +108,8 @@ public class ReservaService {
             throw new BadRequestException("La reserva ya fue pagada");
         }
 
-        if (reserva.getEstado() == EstadoReserva.CANCELADA) {
-            throw new BadRequestException("No puedes pagar una reserva cancelada");
-        }
-
-        if (reserva.getEstado() == EstadoReserva.FINALIZADA) {
-            throw new BadRequestException("No puedes pagar una reserva finalizada");
+        if (reserva.getEstado() == EstadoReserva.CANCELADA || reserva.getEstado() == EstadoReserva.FINALIZADA) {
+            throw new BadRequestException("No puedes pagar esta reserva");
         }
 
         if (reserva.getMonto() == null) {
@@ -121,24 +118,50 @@ public class ReservaService {
 
         reserva.setMetodoPago(dto.getMetodoPago());
 
-        // Si el método es tarjeta, usa Stripe
-        if (dto.getMetodoPago() == MetodoPago.TARJETA) {
-            Long amountMinorUnits = reserva.getMonto().longValue();
+        // métodos manuales de prueba
+        if (dto.getMetodoPago() == MetodoPago.EFECTIVO
+                || dto.getMetodoPago() == MetodoPago.TRANSFERENCIA
+                || dto.getMetodoPago() == MetodoPago.DAVIPLATA) {
 
-            PaymentIntent intent = stripeService.crearPaymentIntent(amountMinorUnits, reserva.getId());
+            reserva.setEstado(EstadoReserva.PAGADA);
+            reserva.setPaymentProvider("MANUAL");
+            reserva.setPaymentReference("MANUAL-" + reserva.getId() + "-" + System.currentTimeMillis());
 
-            reserva.setStripePaymentIntentId(intent.getId());
             reservaRepository.save(reserva);
 
-            return new PagoResponseDTO(intent.getClientSecret(), reserva.getId());
+            return new PagoResponseDTO(
+                    null,
+                    reserva.getId(),
+                    "MANUAL",
+                    null,
+                    reserva.getPaymentReference()
+            );
         }
 
-        // Para métodos de prueba/manuales, marcamos como pagada directamente
-        // Esto te sirve mientras montas otras pasarelas
-        reserva.setEstado(EstadoReserva.PAGADA);
+        // Wompi para TARJETA / PSE / NEQUI
+        Long amountInCents = reserva.getMonto().longValue() * 100L;
+
+        var tx = wompiService.crearTransaccion(
+                reserva.getId(),
+                amountInCents,
+                reserva.getEmailCliente(),
+                dto.getMetodoPago()
+        );
+
+        reserva.setPaymentProvider("WOMPI");
+        reserva.setExternalPaymentId(tx.getData().getId());
+        reserva.setPaymentRedirectUrl(tx.getData().getRedirect_url());
+        reserva.setPaymentReference(tx.getData().getReference());
+
         reservaRepository.save(reserva);
 
-        return new PagoResponseDTO("MANUAL_OK", reserva.getId());
+        return new PagoResponseDTO(
+                null,
+                reserva.getId(),
+                "WOMPI",
+                tx.getData().getRedirect_url(),
+                tx.getData().getReference()
+        );
     }
 
     public void marcarReservaPagada(String paymentIntentId) {
@@ -276,6 +299,10 @@ public class ReservaService {
                 .monto(r.getMonto())
                 .estado(r.getEstado())
                 .metodoPago(r.getMetodoPago())
+                .paymentProvider(r.getPaymentProvider())
+                .externalPaymentId(r.getExternalPaymentId())
+                .paymentRedirectUrl(r.getPaymentRedirectUrl())
+                .paymentReference(r.getPaymentReference())
                 .stripePaymentIntentId(r.getStripePaymentIntentId())
                 .fechaCreacion(r.getFechaCreacion())
                 .guiaId(r.getGuia() != null ? r.getGuia().getId() : null)
@@ -310,6 +337,4 @@ public class ReservaService {
 
         reservaRepository.delete(reserva);
     }
-
-
 }

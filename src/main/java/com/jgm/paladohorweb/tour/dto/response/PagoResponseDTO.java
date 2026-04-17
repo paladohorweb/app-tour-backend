@@ -12,6 +12,11 @@ import lombok.NoArgsConstructor;
 public class PagoResponseDTO {
     @NotNull
     private String clientSecret;
+    private Long reservaId;
+
+    private String provider;          // WOMPI | MANUAL | STRIPE
+    private String checkoutUrl;       // redirect URL si aplica
+    private String reference;         // referencia interna
 
     public PagoResponseDTO(String clientSecret, Long id) {
     }

@@ -59,11 +59,15 @@ public class AuthService {
             throw new BadRequestException("Email ya registrado");
         }
 
+        if (request.getRol() == Rol.ROLE_ADMIN) {
+            throw new BadRequestException("No puedes registrarte como ADMIN");
+        }
+
         Usuario usuario = new Usuario();
         usuario.setEmail(request.getEmail());
         usuario.setPassword(passwordEncoder.encode(request.getPassword()));
         usuario.setNombre(request.getNombre());
-         usuario.setRol(Rol.ROLE_USER); // 🔥 AQUÍ ESTABA TU PROBLEMA
+        usuario.setRol(request.getRol() != null ? request.getRol() : Rol.ROLE_USER); // 🔥 AQUÍ ESTABA TU PROBLEMA
         usuario.setActivo(true);
 
         Usuario saved = usuarioRepository.save(usuario);
