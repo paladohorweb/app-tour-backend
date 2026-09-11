@@ -31,6 +31,8 @@ public class Usuario {
     @Column(nullable = false)
     private Boolean activo;
 
-//    private Usuario guia;
+private String legalVersion;
+    private java.time.Instant consentAt;
+    private boolean marketing;
 
 }

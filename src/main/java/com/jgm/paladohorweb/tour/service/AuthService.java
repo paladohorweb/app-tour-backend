@@ -46,14 +46,14 @@ public class AuthService {
                 usuario.getRol().name()
         );
 
-        String refreshToken = refreshTokenService
-                .createRefreshToken(usuario.getId())
-                .getToken();
+        String refreshToken = null;
 
         return new AuthResponse(accessToken, refreshToken);
     }
 
     public RegisterResponse register(RegisterRequest request) {
+        request.setEmail(request.getEmail().trim().toLowerCase(java.util.Locale.ROOT));
+        if (request.getPassword().getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 72) throw new BadRequestException("La contraseña excede el tamaño admitido");
 
         if (usuarioRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new BadRequestException("Email ya registrado");
@@ -69,6 +69,8 @@ public class AuthService {
         usuario.setNombre(request.getNombre());
         usuario.setRol(request.getRol() != null ? request.getRol() : Rol.ROLE_USER); // 🔥 AQUÍ ESTABA TU PROBLEMA
         usuario.setActivo(true);
+        if (!"2026-09-v2".equals(request.getLegalVersion())) throw new BadRequestException("Acepta la versión vigente de las políticas");
+        usuario.setLegalVersion(request.getLegalVersion()); usuario.setConsentAt(java.time.Instant.now()); usuario.setMarketing(request.isMarketing());
 
         Usuario saved = usuarioRepository.save(usuario);
 

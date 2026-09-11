@@ -14,7 +14,6 @@ import java.util.List;
 @RequestMapping("/api/admin/guias")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
-@CrossOrigin(origins = "http://localhost:4200")
 public class AdminGuiaController {
 
     private final UsuarioRepository usuarioRepository;

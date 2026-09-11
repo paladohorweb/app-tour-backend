@@ -21,6 +21,7 @@ public class RegisterRequest {
         String email;
 
         @NotBlank(message = "La contraseña es obligatoria")
+        @jakarta.validation.constraints.Size(min=12,max=72)
         String password;
 
         @NotBlank(message = "El nombre es obligatorio")
@@ -28,4 +29,8 @@ public class RegisterRequest {
 
         @NotNull
         private Rol rol;
+        @jakarta.validation.constraints.AssertTrue private boolean acceptedTerms;
+        @jakarta.validation.constraints.AssertTrue private boolean acceptedPrivacy;
+        @jakarta.validation.constraints.Pattern(regexp="2026-09-v2") private String legalVersion;
+        private boolean marketing;
 }

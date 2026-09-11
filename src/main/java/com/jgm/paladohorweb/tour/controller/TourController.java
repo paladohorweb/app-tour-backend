@@ -18,7 +18,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/tours")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class TourController {
 
     private final TourService service;

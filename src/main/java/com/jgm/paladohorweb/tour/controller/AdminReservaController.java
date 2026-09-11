@@ -14,7 +14,6 @@ import java.util.List;
 @RequestMapping("/api/admin/reservas")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
-@CrossOrigin(origins = "http://localhost:4200")
 public class AdminReservaController {
 
     private final ReservaService reservaService;

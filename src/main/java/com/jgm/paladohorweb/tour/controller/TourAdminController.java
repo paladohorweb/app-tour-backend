@@ -12,7 +12,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/tours")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class TourAdminController {
 
     private final TourService service;

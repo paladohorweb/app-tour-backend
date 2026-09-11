@@ -34,3 +34,6 @@ build/
 ###Ignorar archivo  de configiuracion sensible##
 src/main/resources/application.propierties
 src/main/resources/application.yml
+.env
+.env.*
+!.env.example

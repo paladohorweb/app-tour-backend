@@ -15,7 +15,6 @@ import java.util.List;
 @RequestMapping("/api/guia")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('GUIA')")
-@CrossOrigin(origins = "http://localhost:4200")
 public class GuiaController {
 
     private final ReservaService reservaService;

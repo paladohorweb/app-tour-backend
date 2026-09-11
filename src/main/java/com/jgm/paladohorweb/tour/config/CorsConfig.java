@@ -8,6 +8,7 @@ import java.util.List;
 
 @Configuration
 public class CorsConfig {
+ @org.springframework.beans.factory.annotation.Value("${app.cors-origins:http://localhost:4200}") private String origins;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -15,7 +16,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // Angular dev
-        config.setAllowedOrigins(List.of("http://localhost:4200"));
+        config.setAllowedOrigins(java.util.Arrays.asList(origins.split(",")));
 
         // Métodos (incluye PATCH)
         config.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
@@ -24,7 +25,7 @@ public class CorsConfig {
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
 
         // Si usas cookies (hoy no, pero ok)
-        config.setAllowCredentials(true);
+        config.setAllowCredentials(false);
 
         // Opcional: exponer headers
         config.setExposedHeaders(List.of("Authorization"));

@@ -23,8 +23,6 @@ public class JwtProvider {
 
     @PostConstruct
     public void init() {
-        System.out.println("JWT_SECRET length = " + (jwtSecret == null ? "null" : jwtSecret.length()));
-        System.out.println("JWT_SECRET preview=" + jwtSecret.substring(0, 5) + "..." + jwtSecret.substring(jwtSecret.length()-5));
         byte[] keyBytes = Decoders.BASE64.decode(jwtSecret); // ✅ correcto si JWT_SECRET es base64
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
@@ -56,15 +54,10 @@ public class JwtProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException e) {
-            System.out.println("JWT expirado: " + e.getMessage());
         } catch (UnsupportedJwtException e) {
-            System.out.println("JWT no soportado: " + e.getMessage());
         } catch (MalformedJwtException e) {
-            System.out.println("JWT malformado: " + e.getMessage());
         } catch (io.jsonwebtoken.security.SignatureException e) {
-            System.out.println("Firma JWT inválida: " + e.getMessage());
         } catch (IllegalArgumentException e) {
-            System.out.println("JWT vacío/ilegal: " + e.getMessage());
         }
         return false;
     }

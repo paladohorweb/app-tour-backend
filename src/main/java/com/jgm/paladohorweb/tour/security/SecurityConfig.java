@@ -31,6 +31,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
+                .headers(h -> h.contentTypeOptions(Customizer.withDefaults()).frameOptions(f -> f.deny()))
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthEntryPoint))
@@ -46,22 +47,12 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.POST, "/api/tours/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/tours/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/api/tours/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/tours/**").hasRole("ADMIN")
-
-                        .requestMatchers(HttpMethod.POST, "/api/reservas").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/reservas/mias").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/reservas/*").authenticated()
-                        .requestMatchers(HttpMethod.PATCH, "/api/reservas/*/cancelar").authenticated()
-                        .requestMatchers(HttpMethod.DELETE,"/api/reservas/*").authenticated()
-
-                        .requestMatchers("/api/pagos/**").authenticated()
-
+                        .requestMatchers(HttpMethod.GET, "/api/v2/experiences", "/api/v2/experiences/*", "/api/v2/experiences/*/slots", "/api/v2/legal").permitAll()
+                        .requestMatchers("/api/v2/**").authenticated()
+                        .requestMatchers("/api/pagos/**", "/api/stripe/**").denyAll()
+                        .requestMatchers(HttpMethod.POST, "/api/tours/**", "/api/reservas/**").denyAll()
+                        .requestMatchers(HttpMethod.GET, "/api/reservas/**").authenticated()
                         .requestMatchers("/api/guia/**").hasRole("GUIA")
-
-                        .requestMatchers(HttpMethod.POST, "/api/stripe/webhook").permitAll()
 
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 

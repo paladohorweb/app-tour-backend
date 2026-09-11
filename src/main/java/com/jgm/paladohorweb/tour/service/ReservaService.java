@@ -82,6 +82,9 @@ public class ReservaService {
         Reserva r = reservaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada"));
 
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        boolean admin = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        if (!admin && !r.getUsuario().getEmail().equals(email) && (r.getGuia()==null || !r.getGuia().getEmail().equals(email))) throw new ResourceNotFoundException("Reserva no encontrada");
         return toResponse(r);
     }
 
@@ -123,7 +126,7 @@ public class ReservaService {
                 || dto.getMetodoPago() == MetodoPago.TRANSFERENCIA
                 || dto.getMetodoPago() == MetodoPago.DAVIPLATA) {
 
-            reserva.setEstado(EstadoReserva.PAGADA);
+            reserva.setEstado(EstadoReserva.PENDIENTE);
             reserva.setPaymentProvider("MANUAL");
             reserva.setPaymentReference("MANUAL-" + reserva.getId() + "-" + System.currentTimeMillis());
 
