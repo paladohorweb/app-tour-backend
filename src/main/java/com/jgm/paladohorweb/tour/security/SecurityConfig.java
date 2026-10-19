@@ -28,7 +28,7 @@ public class SecurityConfig {
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, com.jgm.paladohorweb.tour.license.JgmLicenseClient license, com.fasterxml.jackson.databind.ObjectMapper licenseMapper) throws Exception {
 
         http
                 .headers(h -> h.contentTypeOptions(Customizer.withDefaults()).frameOptions(f -> f.deny()))
@@ -59,7 +59,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new com.jgm.paladohorweb.tour.license.JgmLicenseGate(license, ()->"default", licenseMapper), org.springframework.security.web.access.intercept.AuthorizationFilter.class);
 
         return http.build();
     }
@@ -77,3 +78,4 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 }
+

@@ -28,7 +28,7 @@ public class CorsConfig {
         config.setAllowCredentials(false);
 
         // Opcional: exponer headers
-        config.setExposedHeaders(List.of("Authorization"));
+        config.setExposedHeaders(List.of("Authorization", "X-JGM-License-State", "X-JGM-Billing-Url"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -36,3 +36,4 @@ public class CorsConfig {
         return source;
     }
 }
+
